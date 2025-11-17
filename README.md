@@ -1,5 +1,6 @@
 # Trabalho-final-DSIA
 Desenvolvimento de uma aplicação completa de recomendação 
+
 Documentação da Base de Dados (Introdução do Projeto)
 
 A base de dados utilizada neste projeto é composta por dois arquivos principais — movies.csv e ratings.csv — que juntos formam um conjunto clássico utilizado em sistemas de recomendação, semelhante ao MovieLens. O objetivo dessa base é permitir análises sobre comportamentos de usuários, preferências de filmes e avaliar modelos de filtragem colaborativa ou conteúdo.
