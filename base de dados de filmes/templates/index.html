@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Recomendação Interativo</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: #1f2937;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            background: #2563eb;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        pre {
+            background: #e5e7eb;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sistema de Recomendação Interativo</h1>
+    <p>Use os formulários abaixo para testar a API</p>
+</header>
+
+<div class="container">
+
+    <!-- FILMES MAIS BEM AVALIADOS -->
+    <h2>⭐ Filmes mais bem avaliados</h2>
+    <button onclick="getBestRated()">Buscar</button>
+    <pre id="best-rated"></pre>
+
+    <!-- FILMES MAIS VISTOS -->
+    <h2>🎬 Filmes mais vistos</h2>
+    <button onclick="getMostViewed()">Buscar</button>
+    <pre id="most-viewed"></pre>
+
+    <!-- FILMES SIMILARES -->
+    <h2>🔍 Filmes similares</h2>
+    <input type="number" id="similar-movie-id" placeholder="ID do Filme">
+    <button onclick="getSimilar()">Buscar</button>
+    <pre id="similar"></pre>
+
+    <!-- RECOMENDAÇÕES POR USUÁRIO -->
+    <h2>👤 Recomendações para Usuário</h2>
+    <input type="number" id="user-id" placeholder="ID do Usuário">
+    <button onclick="getUserBased()">Buscar</button>
+    <pre id="user-based"></pre>
+
+    <!-- ADICIONAR USUÁRIO -->
+    <h2>➕ Adicionar Usuário</h2>
+    <input type="number" id="new-user-id" placeholder="Novo ID do Usuário">
+    <button onclick="addUser()">Adicionar</button>
+    <pre id="add-user"></pre>
+
+    <!-- ADICIONAR FILME -->
+    <h2>🎞 Adicionar Filme</h2>
+    <input type="number" id="new-movie-id" placeholder="Novo movieId"><br>
+    <input type="text" id="new-movie-title" placeholder="Título"><br>
+    <input type="text" id="new-movie-genre" placeholder="Gênero"><br>
+    <button onclick="addMovie()">Adicionar</button>
+    <pre id="add-movie"></pre>
+
+    <!-- ATUALIZAR RATING -->
+    <h2>⭐ Atualizar Rating</h2>
+    <input type="number" id="rating-user-id" placeholder="ID do Usuário"><br>
+    <input type="number" id="rating-movie-id" placeholder="ID do Filme"><br>
+    <input type="number" step="0.5" id="rating-value" placeholder="Rating (0 a 5)"><br>
+    <button onclick="updateRating()">Atualizar</button>
+    <pre id="rating-update"></pre>
+
+</div>
+
+
+<script>
+    async function getBestRated() {
+        let res = await fetch("/best-seller/ratings/");
+        document.getElementById("best-rated").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function getMostViewed() {
+        let res = await fetch("/best-seller/views/");
+        document.getElementById("most-viewed").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function getSimilar() {
+        let movieId = document.getElementById("similar-movie-id").value;
+        let res = await fetch(`/similarity/${movieId}`);
+        document.getElementById("similar").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function getUserBased() {
+        let userId = document.getElementById("user-id").value;
+        let res = await fetch(`/user-based/${userId}`);
+        document.getElementById("user-based").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function addUser() {
+        let id = document.getElementById("new-user-id").value;
+        let res = await fetch("/users/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ user_id: Number(id) })
+        });
+        document.getElementById("add-user").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function addMovie() {
+        let id = Number(document.getElementById("new-movie-id").value);
+        let title = document.getElementById("new-movie-title").value;
+        let genre = document.getElementById("new-mmovie-genre").value;
+
+        let res = await fetch("/movies/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                movieId: id,
+                title: title,
+                genres: genre
+            })
+        });
+
+        document.getElementById("add-movie").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function updateRating() {
+        let userId = Number(document.getElementById("rating-user-id").value);
+        let movieId = Number(document.getElementById("rating-movie-id").value);
+        let rating = Number(document.getElementById("rating-value").value);
+
+        let res = await fetch("/ratings/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                user_id: userId,
+                movie_id: movieId,
+                rating: rating
+            })
+        });
+
+        document.getElementById("rating-update").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+</script>
+
+</body>
+</html>
