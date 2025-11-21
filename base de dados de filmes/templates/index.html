@@ -2,189 +2,182 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Sistema de Recomendação Interativo</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 0;
-            margin: 0;
-        }
-
-        header {
-            background: #1f2937;
-            color: white;
-            text-align: center;
-            padding: 25px;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        h2 {
-            margin-top: 30px;
-            color: #1f2937;
-        }
-
-        input, button {
-            padding: 10px;
-            margin: 10px 0;
-        }
-
-        button {
-            background: #2563eb;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background: #1e40af;
-        }
-
-        pre {
-            background: #e5e7eb;
-            padding: 10px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Recommender | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-    <h1>Sistema de Recomendação Interativo</h1>
-    <p>Use os formulários abaixo para testar a API</p>
-</header>
+    <nav class="app-sidebar">
+        <div class="sidebar-header">
+            <span class="material-icons-round">analytics</span>
+            RecSys.io
+        </div>
+        
+        <div class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <span class="material-icons-round">dashboard</span>
+                Dashboard
+            </a>
+        </div>
 
-<div class="container">
+        <div class="sidebar-footer">
+            v1.0.0-stable<br>
+            Docker Container Active
+        </div>
+    </nav>
 
-    <!-- FILMES MAIS BEM AVALIADOS -->
-    <h2>⭐ Filmes mais bem avaliados</h2>
-    <button onclick="getBestRated()">Buscar</button>
-    <pre id="best-rated"></pre>
+    <main class="app-main">
+        
+        <header class="app-header">
+            <div class="header-title">
+                <h2>Dashboard de Recomendação</h2>
+                <p>Gerenciamento de modelo e endpoints de inferência</p>
+            </div>
+            </header>
 
-    <!-- FILMES MAIS VISTOS -->
-    <h2>🎬 Filmes mais vistos</h2>
-    <button onclick="getMostViewed()">Buscar</button>
-    <pre id="most-viewed"></pre>
+        <div class="content-scroll">
+            <div class="dashboard-grid">
 
-    <!-- FILMES SIMILARES -->
-    <h2>🔍 Filmes similares</h2>
-    <input type="number" id="similar-movie-id" placeholder="ID do Filme">
-    <button onclick="getSimilar()">Buscar</button>
-    <pre id="similar"></pre>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="header-label"><span class="material-icons-round">star_rate</span> Top Rated</div>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted);">Listar itens com maior score médio.</p>
+                        <button onclick="getBestRated()">Carregar Relatório</button>
+                        <div class="output-container">
+                            <span class="output-label">JSON Output</span>
+                            <pre id="best-rated">{}</pre>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- RECOMENDAÇÕES POR USUÁRIO -->
-    <h2>👤 Recomendações para Usuário</h2>
-    <input type="number" id="user-id" placeholder="ID do Usuário">
-    <button onclick="getUserBased()">Buscar</button>
-    <pre id="user-based"></pre>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="header-label"><span class="material-icons-round">trending_up</span> Most Viewed</div>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted);">Itens com maior volume de interações.</p>
+                        <button onclick="getMostViewed()" class="btn-outline">Carregar Dados</button>
+                        <div class="output-container">
+                            <span class="output-label">JSON Output</span>
+                            <pre id="most-viewed">{}</pre>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- ADICIONAR USUÁRIO -->
-    <h2>➕ Adicionar Usuário</h2>
-    <input type="number" id="new-user-id" placeholder="Novo ID do Usuário">
-    <button onclick="addUser()">Adicionar</button>
-    <pre id="add-user"></pre>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="header-label"><span class="material-icons-round">hub</span> Engine de Similaridade</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Target Movie ID</label>
+                            <input type="number" id="similar-movie-id" placeholder="Ex: 1024">
+                        </div>
+                        <button onclick="getSimilar()">Executar Item-based</button>
+                        <div class="output-container">
+                            <pre id="similar">Waiting for input...</pre>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- ADICIONAR FILME -->
-    <h2>🎞 Adicionar Filme</h2>
-    <input type="number" id="new-movie-id" placeholder="Novo movieId"><br>
-    <input type="text" id="new-movie-title" placeholder="Título"><br>
-    <input type="text" id="new-movie-genre" placeholder="Gênero"><br>
-    <button onclick="addMovie()">Adicionar</button>
-    <pre id="add-movie"></pre>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="header-label"><span class="material-icons-round">person_search</span> User Inference</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>User ID</label>
+                            <input type="number" id="user-id" placeholder="Ex: 88">
+                        </div>
+                        <button onclick="getUserBased()">Predict Recommendations</button>
+                        <div class="output-container">
+                            <pre id="user-based">Waiting for input...</pre>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- ATUALIZAR RATING -->
-    <h2>⭐ Atualizar Rating</h2>
-    <input type="number" id="rating-user-id" placeholder="ID do Usuário"><br>
-    <input type="number" id="rating-movie-id" placeholder="ID do Filme"><br>
-    <input type="number" step="0.5" id="rating-value" placeholder="Rating (0 a 5)"><br>
-    <button onclick="updateRating()">Atualizar</button>
-    <pre id="rating-update"></pre>
+                <div class="card full-width">
+                    <div class="card-header">
+                        <div class="header-label"><span class="material-icons-round">add_circle</span> Ingestão de Dados</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                                <label>Registrar Usuário</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" id="new-user-id" placeholder="Novo ID">
+                                    <button onclick="addUser()">POST</button>
+                                </div>
+                                <div class="output-container">
+                                    <pre id="add-user">Status: Idle</pre>
+                                </div>
+                            </div>
+                            
+                            <div style="width: 1px; background: var(--color-border);"></div>
 
-</div>
+                            <div style="flex: 2; display: flex; flex-direction: column; gap: 10px;">
+                                <label>Registrar Filme</label>
+                                <div class="form-row">
+                                    <input type="number" id="new-movie-id" placeholder="ID" style="width: 80px;">
+                                    <input type="text" id="new-movie-title" placeholder="Título do Filme" style="flex: 1;">
+                                    <input type="text" id="new-movie-genre" placeholder="Gênero" style="width: 150px;">
+                                </div>
+                                <button onclick="addMovie()">Salvar no Banco Vetorial</button>
+                                <div class="output-container">
+                                    <pre id="add-movie">Status: Idle</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="card full-width">
+                    <div class="card-header">
+                        <div class="header-label"><span class="material-icons-round">rate_review</span> Atualizar Feedback (Loop de Treino)</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row" style="align-items: flex-end;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>User ID</label>
+                                <input type="number" id="rating-user-id">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Movie ID</label>
+                                <input type="number" id="rating-movie-id">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Score (0.0 - 5.0)</label>
+                                <input type="number" step="0.5" id="rating-value">
+                            </div>
+                            <button onclick="updateRating()" style="height: 42px;">Enviar Feedback</button>
+                        </div>
+                        <div class="output-container">
+                            <pre id="rating-update">Aguardando submissão...</pre>
+                        </div>
+                    </div>
+                </div>
 
-<script>
-    async function getBestRated() {
-        let res = await fetch("/best-seller/ratings/");
-        document.getElementById("best-rated").textContent = JSON.stringify(await res.json(), null, 2);
-    }
+            </div>
+            
+            <footer style="margin-top: 3rem; text-align: center; color: var(--color-text-muted); font-size: 0.8rem;">
+                &copy; 2025 Recommender System Enterprise Edition. All rights reserved.
+            </footer>
+        </div>
+    </main>
 
-    async function getMostViewed() {
-        let res = await fetch("/best-seller/views/");
-        document.getElementById("most-viewed").textContent = JSON.stringify(await res.json(), null, 2);
-    }
-
-    async function getSimilar() {
-        let movieId = document.getElementById("similar-movie-id").value;
-        let res = await fetch(`/similarity/${movieId}`);
-        document.getElementById("similar").textContent = JSON.stringify(await res.json(), null, 2);
-    }
-
-    async function getUserBased() {
-        let userId = document.getElementById("user-id").value;
-        let res = await fetch(`/user-based/${userId}`);
-        document.getElementById("user-based").textContent = JSON.stringify(await res.json(), null, 2);
-    }
-
-    async function addUser() {
-        let id = document.getElementById("new-user-id").value;
-        let res = await fetch("/users/", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ user_id: Number(id) })
-        });
-        document.getElementById("add-user").textContent = JSON.stringify(await res.json(), null, 2);
-    }
-
-    async function addMovie() {
-        let id = Number(document.getElementById("new-movie-id").value);
-        let title = document.getElementById("new-movie-title").value;
-        let genre = document.getElementById("new-movie-genre").value;
-
-        let res = await fetch("/movies/", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                movieId: id,
-                title: title,
-                genres: genre
-            })
-        });
-
-        document.getElementById("add-movie").textContent = JSON.stringify(await res.json(), null, 2);
-    }
-
-    async function updateRating() {
-        let userId = Number(document.getElementById("rating-user-id").value);
-        let movieId = Number(document.getElementById("rating-movie-id").value);
-        let rating = Number(document.getElementById("rating-value").value);
-
-        let res = await fetch("/ratings/", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                user_id: userId,
-                movie_id: movieId,
-                rating: rating
-            })
-        });
-
-        document.getElementById("rating-update").textContent = JSON.stringify(await res.json(), null, 2);
-    }
-
-</script>
-
+    <script>
+        async function getBestRated() { try { let res = await fetch("/best-seller/ratings/"); document.getElementById("best-rated").textContent = JSON.stringify(await res.json(), null, 2); } catch (e) { document.getElementById("best-rated").textContent = "Erro/Offline"; } }
+        async function getMostViewed() { try { let res = await fetch("/best-seller/views/"); document.getElementById("most-viewed").textContent = JSON.stringify(await res.json(), null, 2); } catch (e) { document.getElementById("most-viewed").textContent = "Erro/Offline"; } }
+        async function getSimilar() { try { let movieId = document.getElementById("similar-movie-id").value; let res = await fetch(`/similarity/${movieId}`); document.getElementById("similar").textContent = JSON.stringify(await res.json(), null, 2); } catch (e) { document.getElementById("similar").textContent = "Erro ID"; } }
+        async function getUserBased() { try { let userId = document.getElementById("user-id").value; let res = await fetch(`/user-based/${userId}`); document.getElementById("user-based").textContent = JSON.stringify(await res.json(), null, 2); } catch (e) { document.getElementById("user-based").textContent = "Erro ID"; } }
+        async function addUser() { let id = document.getElementById("new-user-id").value; let res = await fetch("/users/", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ user_id: Number(id) }) }); document.getElementById("add-user").textContent = JSON.stringify(await res.json(), null, 2); }
+        async function addMovie() { let id = Number(document.getElementById("new-movie-id").value); let title = document.getElementById("new-movie-title").value; let genre = document.getElementById("new-movie-genre").value; let res = await fetch("/movies/", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ movieId: id, title: title, genres: genre }) }); document.getElementById("add-movie").textContent = JSON.stringify(await res.json(), null, 2); }
+        async function updateRating() { let userId = Number(document.getElementById("rating-user-id").value); let movieId = Number(document.getElementById("rating-movie-id").value); let rating = Number(document.getElementById("rating-value").value); let res = await fetch("/ratings/", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ user_id: userId, movie_id: movieId, rating: rating }) }); document.getElementById("rating-update").textContent = JSON.stringify(await res.json(), null, 2); }
+    </script>
 </body>
 </html>
