@@ -151,7 +151,7 @@
     async function addMovie() {
         let id = Number(document.getElementById("new-movie-id").value);
         let title = document.getElementById("new-movie-title").value;
-        let genre = document.getElementById("new-mmovie-genre").value;
+        let genre = document.getElementById("new-movie-genre").value;
 
         let res = await fetch("/movies/", {
             method: "POST",
