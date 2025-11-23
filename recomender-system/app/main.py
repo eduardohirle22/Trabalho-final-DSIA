@@ -4,14 +4,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 # -----------------------------
 # CARREGAR DADOS
 # -----------------------------
-ratings = pd.read_csv('ratings.csv')
-movies = pd.read_csv('movies.csv')
+ratings = pd.read_csv('data/ratings.csv')
+movies = pd.read_csv('data/movies.csv')
 
 # Conjuntos auxiliares
 known_users = set(ratings["userId"].unique())
