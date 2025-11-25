@@ -1,66 +1,220 @@
-# Sistema de Recomendação — Trabalho Final DSIA  
-**Desenvolvimento de uma aplicação completa de recomendação**
+# Sistema de Recomendação — Trabalho Final DSIA
+Desenvolvimento de um sistema completo de recomendação utilizando Python, FastAPI e testes automatizados.
 
 ---
 
-## Documentação da Base de Dados
+## 1. Visão Geral do Projeto
 
-A base de dados utilizada no projeto é formada por dois arquivos principais — **`movies.csv`** e **`ratings.csv`**.  
-Juntos, eles compõem um dataset amplamente utilizado em estudos de sistemas de recomendação, inspirado no **MovieLens**.
+Este projeto implementa um sistema de recomendação baseado em dados reais do MovieLens. Ele utiliza técnicas de filtragem colaborativa e análise estatística para recomendar filmes com base em similaridade e preferências de usuários. A aplicação oferece:
 
-Esse conjunto possibilita análises sobre preferências de usuários, características dos filmes e avaliação de modelos colaborativos, de conteúdo ou híbridos.
-
----
-
-## 1. `movies.csv`
-
-Arquivo contendo informações descritivas sobre os filmes do catálogo.
-
-**Quantidade de registros:** **9.742 filmes**
-
-### Colunas
-- **`movieId` (int)** — Identificador único do filme (chave primária).  
-- **`title` (string)** — Título do filme (incluindo o ano de lançamento).  
-- **`genres` (string)** — Lista de gêneros separados por `|`  
-
-### Exemplos de uso no projeto
-- Enriquecimento das recomendações por **similaridade de gêneros**.  
-- Análises por categoria (comédia, ação, romance, etc.).  
-- Junção com o arquivo de avaliações para contextualização dos resultados.
+- API REST desenvolvida com FastAPI.
+- Interface web simples para interação com a API.
+- Testes automatizados com pytest.
+- Organização modular seguindo boas práticas de engenharia.
+- Carregamento e manipulação de dados via pandas.
 
 ---
 
-## 2. `ratings.csv`
+## 2. Objetivo da Aplicação
 
-Contém as avaliações realizadas pelos usuários sobre cada filme.
+A aplicação tem como objetivos principais:
 
-**Quantidade de registros:** **100.836 avaliações**
-
-### Colunas
-- **`userId` (int)** — Identificador do usuário.  
-- **`movieId` (int)** — Filme avaliado (chave estrangeira para `movies.csv`).  
-- **`rating` (float)** — Nota de 0.5 a 5.0.  
-- **`timestamp` (int)** — Momento da avaliação (Unix Time).
-
-### Exemplos de uso no projeto
-- Treinamento de modelos de recomendação (User-Based, Item-Based, Híbridos).  
-- Análise de padrões e preferências de usuários.  
-- Cálculo de estatísticas: média de notas, popularidade, rankings, etc.
+1. Ler, tratar e utilizar dois datasets (ratings e movies) para construir recomendações.
+2. Implementar diferentes abordagens de recomendação:
+   - Recomendação baseada em itens (item-based).
+   - Recomendação baseada em usuários (user-based).
+   - Rankings estatísticos (mais bem avaliados, mais assistidos).
+3. Disponibilizar essas funcionalidades via API.
+4. Permitir cadastro de novos usuários, filmes e avaliações.
+5. Garantir confiabilidade por meio de testes automatizados.
 
 ---
 
-## 3. Relação entre os arquivos
+## 3. Arquitetura da Aplicação
 
-Os dois arquivos possuem uma relação **1 : N**:
+A arquitetura é composta pelos seguintes componentes:
 
-- `movies.csv` → contém cada filme apenas uma vez;  
-- `ratings.csv` → contém múltiplas avaliações para cada filme.
+- **FastAPI**: responsável pelo backend e disponibilização dos endpoints.
+- **Templates HTML + CSS**: interface visual do dashboard.
+- **Pandas + Scikit-Learn**: processamento dos dados e cálculo de similaridades.
+- **TestClient (pytest)**: automação dos testes e validação da API.
 
-A conexão ocorre por meio da chave **`movieId`**.
+Toda a lógica é centralizada no módulo `main.py`, com estruturas bem definidas para endpoints, funções de recomendação e modelos Pydantic.
 
-### Isso permite análises integradas como:
-- Identificar filmes mais populares e mais bem avaliados.  
-- Medir quais gêneros possuem melhor aceitação.  
-- Criar perfis personalizados de usuários para recomendações.
+---
+
+## 4. Estrutura do Repositório
+
+A estrutura foi organizada conforme padrões de projetos FastAPI:
+
+recomender-system/
+│
+├── app/
+│ ├── data/
+│ │ ├── movies.csv
+│ │ └── ratings.csv
+│ ├── static/
+│ │ └── style.css
+│ ├── templates/
+│ │ └── index.html
+│ ├── init.py
+│ └── main.py
+│
+├── tests/
+│ ├── init.py
+│ └── test_api.py
+│
+├── requirements.txt
+└── README.md
+
+
+Descrição dos diretórios:
+
+- `app/data/` → arquivos CSV utilizados pelo modelo.
+- `app/static/` → arquivos CSS e recursos da interface.
+- `app/templates/` → página HTML utilizada no dashboard.
+- `app/main.py` → código principal da API e lógica das recomendações.
+- `tests/` → suíte de testes automatizados.
+- `requirements.txt` → dependências necessárias.
+
+---
+
+## 5. Dataset Utilizado
+
+A base de dados é composta pelos arquivos:
+
+### 5.1 movies.csv
+Contém informações dos filmes:
+
+- movieId  
+- title  
+- genres  
+
+Total: 9.742 filmes.
+
+### 5.2 ratings.csv
+Contém avaliações dos usuários:
+
+- userId  
+- movieId  
+- rating  
+- timestamp  
+
+Total: 100.836 avaliações.
+
+Os arquivos possuem relação 1:N através de `movieId`.
+
+---
+
+## 6. Técnicas de Recomendação Implementadas
+
+### 6.1 Recomendação Baseada em Itens (Item-Based)
+Utiliza a matriz usuário-filme para calcular similaridade entre filmes.  
+A similaridade é calculada por meio de **Cosine Similarity**.
+
+### 6.2 Recomendação Baseada em Usuários (User-Based)
+Identifica usuários semelhantes (comportamento de avaliação) e recomenda itens não assistidos.
+
+### 6.3 Rankings Estatísticos
+- Filmes mais bem avaliados (média ponderada com número mínimo de avaliações).
+- Filmes mais assistidos (contagem de avaliações).
+
+---
+
+## 7. Instalação e Execução
+
+### 7.1 Ativar ambiente virtual
+..venv\Scripts\activate
+
+### 7.2 Instalar dependências
+pip install -r requirements.txt
+
+### 7.3 Executar o servidor
+uvicorn app.main:app --reload --port 8081
+
+
+### 7.4 Acessar aplicação
+- Dashboard: http://localhost:8081  
+- Documentação Swagger: http://localhost:8081/docs  
+
+---
+
+## 8. Testes Automatizados
+
+Todos os principais endpoints possuem testes automatizados com pytest.
+
+### Executar testes:
+pytest -v
+
+
+Os testes cobrem:
+
+- Página inicial
+- Top rated
+- Most viewed
+- Similaridade
+- User-based
+- Cadastro de usuário
+- Cadastro de filme
+- Atualização de avaliações
+- Busca por nome
+
+Resultado esperado:
+
+9 passed
+
+
+---
+
+## 9. Documentação dos Endpoints
+
+### GET /
+Retorna o dashboard HTML.
+
+### GET /best-seller/ratings/
+Lista filmes mais bem avaliados.
+
+### GET /best-seller/views/
+Lista filmes mais assistidos.
+
+### GET /similarity/{movie_id}
+Retorna filmes semelhantes ao item informado.
+
+### GET /user-based/{user_id}
+Recomenda filmes com base em usuários similares.
+
+### GET /search/movie/{name}
+Busca filmes pelo título.
+
+### POST /users/
+Cadastra um novo usuário.
+
+### POST /movies/
+Cadastra um novo filme.
+
+### POST /ratings/
+Registra ou atualiza a avaliação de um usuário.
+
+---
+
+## 10. Docker (a ser incluído)
+O projeto está preparado para receber:
+
+- Dockerfile
+- docker-compose.yml
+- Configuração de ambiente para execução containerizada
+
+A containerização será documentada na próxima etapa.
+
+---
+
+## 11. Autores
+
+Alice Moreira
+Eduardo Hirle
+Isadora Poppi
+Gabriel Poppi 
+
+Trabalho desenvolvido para a disciplina DSIA.
 
 ---

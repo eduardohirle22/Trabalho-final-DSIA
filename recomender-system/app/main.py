@@ -5,22 +5,30 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
+    name="static"
+)
+
 # -----------------------------
 # CARREGAR DADOS
 # -----------------------------
-ratings = pd.read_csv('data/ratings.csv')
-movies = pd.read_csv('data/movies.csv')
+ratings = pd.read_csv(os.path.join(BASE_DIR, "data", "ratings.csv"))
+movies = pd.read_csv(os.path.join(BASE_DIR, "data", "movies.csv"))
 
 # Conjuntos auxiliares
 known_users = set(ratings["userId"].unique())
 known_movies = set(movies["movieId"].unique())
 
 # Templates HTML
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # -----------------------------
 # MODELOS Pydantic
