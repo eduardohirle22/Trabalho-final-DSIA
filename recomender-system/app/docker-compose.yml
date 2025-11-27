@@ -1,0 +1,11 @@
+services:
+  movies-api:
+    build: .
+    container_name: movies_api_container
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./data:/app/data
+      - ./templates:/app/templates
+      - ./static:/app/static
+    restart: always
