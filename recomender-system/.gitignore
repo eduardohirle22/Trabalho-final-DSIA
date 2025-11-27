@@ -1,0 +1,3 @@
+#Ignora os arquivos dockers
+app/docker-compose.yml
+app/Dockerfile
