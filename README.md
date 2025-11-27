@@ -197,15 +197,81 @@ Registra ou atualiza a avaliação de um usuário.
 
 ---
 
-## 10. Docker (a ser incluído)
-O projeto está preparado para receber:
+## 10. Docker 
 
-- Dockerfile
-- docker-compose.yml
-- Configuração de ambiente para execução containerizada
+# Guia de Execução no Play With Docker (PWD)
 
-A containerização será documentada na próxima etapa.
+Este documento explica como executar o projeto utilizando o ambiente
+online Play With Docker.
 
+## 1. Acessar o Play With Docker
+
+1.  Acesse: https://labs.play-with-docker.com\
+2.  Faça login com sua conta DockerHub.\
+3.  Clique em **Start** para iniciar o ambiente.\
+4.  Clique em **+ ADD NEW INSTANCE** para abrir um terminal Linux com
+    Docker habilitado.
+
+## 2. Baixar o projeto do GitHub
+
+``` bash
+wget https://github.com/eduardohirle22/Trabalho-final-DSIA/archive/refs/heads/main.zip -O trabalho-dsia.zip
+```
+
+## 3. Descompactar o arquivo
+
+``` bash
+unzip trabalho-dsia.zip -d trabalho-dsia
+```
+
+## 4. Acessar a pasta principal do projeto
+
+``` bash
+cd trabalho-dsia/Trabalho-final-DSIA-main/recomender-system/app
+```
+
+## 5. Subir os containers com Docker Compose
+
+``` bash
+docker compose up -d
+```
+
+O Docker irá:
+
+-   Construir as imagens necessárias\
+-   Iniciar o servidor\
+-   Disponibilizar a aplicação na porta **8081**
+
+## 6. Confirmar se o container está em execução
+
+``` bash
+docker ps
+```
+
+O container deve estar listado e utilizando a porta **8081**.
+
+# Acesso à aplicação via navegador
+
+Após o serviço iniciar, o Play With Docker exibirá automaticamente um
+botão no topo da página:
+
+**OPEN PORT 8081**
+
+Clique nele para abrir a aplicação no navegador.
+
+## Endpoints da API (FastAPI)
+
+Swagger:
+
+    /docs
+
+ReDoc:
+
+    /redoc
+
+Exemplo:
+
+    https://<id-gerado-pelo-pwd>.play-with-docker.com/docs
 ---
 
 ## 11. Autores
